@@ -4,6 +4,7 @@ import os.path as osp
 import shutil as sh
 
 from _lab import __command_module__, ENV, ROOT, PRINT, cli
+from argparse import ArgumentParser
 
 HERE, LOG = __command_module__(__name__, __spec__, __file__)
 
@@ -11,6 +12,18 @@ lab_dir = ROOT()
 here_dir = HERE()
 
 nproc = os.cpu_count()
+
+
+parser = ArgumentParser(description=__doc__)
+parser.add_argument(
+    "--run",
+    help="运行模式，可选值有 prepare,configure,build,install,validate,clean",
+    default="prepare,configure,build,install,validate",
+    type=str,
+)
+
+args = parser.parse_args()
+
 
 # %%
 def download_source():
@@ -31,7 +44,7 @@ def configure():
     print(f"Build cache dir: {build_dir}")
     args1 = [
         f"{ENV.SOURCE_DIR}/configure",
-        "--with-lib-path=\"/usr/lib:/usr/local/lib\"",
+        "--with-lib-path=/usr/lib:/usr/local/lib",
         "--enable-gold",
         "--disable-gdb",
         "--disable-werror",
@@ -39,9 +52,7 @@ def configure():
         "--with-pic",
         "--with-system-zlib"
     ]
-    result = " ".join(args1)
-    print(result)
-    LOG.run(result, cwd=build_dir, check=True)
+    LOG.run(args1, cwd=build_dir, check=True)
     print("Configure finished")
 # %%
 def build():
@@ -108,3 +119,17 @@ def clean_build():
         print(f"Failed to remove {prefix} with error {e.strerror}")
     print("Clean finished")
 # %%
+run_modes = args.run.split(",")
+for mode in run_modes:
+    if mode == "prepare":
+        prepare()
+    elif mode == "configure":
+        configure()
+    elif mode == "build":
+        build()
+    elif mode == "install":
+        install()
+    elif mode == "validate":
+        validate()
+    elif mode == "clean":
+        clean_build()
