@@ -47,6 +47,7 @@ def configure():
         "--with-lib-path=/usr/lib:/usr/local/lib",
         "--enable-gold",
         "--disable-gdb",
+        "--disable-ld",
         "--disable-werror",
         "--with-debuginfod",
         "--with-pic",
@@ -68,6 +69,12 @@ def build():
     ]
     print("make configure host")
     LOG.run(configure_host, cwd=build_dir, check=True)
+    # all_gold = [
+    #     "make",
+    #     "all-gold",
+    #     f"-j{nproc}"
+    # ]
+    # LOG.run(all_gold, cwd=build_dir, check=True)
     tooldir = [
         "make",
         "tooldir=/usr",
@@ -85,7 +92,7 @@ def install():
         "make",
         f"prefix={prefix}",
         f"tooldir={prefix}",
-        "install",
+        "install-gold",
         f"-j{nproc}"
     ]
     print("make install")

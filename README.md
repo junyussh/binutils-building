@@ -1,4 +1,4 @@
-# binutils build script
+# binutils building script
 
 These scripts are based on the binutils PKGBUILD from the [AUR](https://aur.archlinux.org/packages/binutils-2.35.2) and tested on the Arch Linux. 
 
